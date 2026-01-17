@@ -1,4 +1,5 @@
 import { GraduationCap, Award } from "lucide-react";
+import useScrollAnimation from "@/hooks/useScrollAnimation";
 
 const education = [
   {
@@ -28,10 +29,16 @@ const education = [
 ];
 
 const EducationSection = () => {
+  const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 });
+
   return (
     <section id="education" className="py-20 bg-background">
-      <div className="container mx-auto px-4">
-        <div className="animate-slide-in-left" style={{ animationDelay: "0.1s" }}>
+      <div className="container mx-auto px-4" ref={ref}>
+        <div
+          className={`transition-all duration-700 ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+          }`}
+        >
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-foreground">
             Education
           </h2>
@@ -46,34 +53,39 @@ const EducationSection = () => {
             {education.map((edu, index) => (
               <div
                 key={edu.degree + edu.year}
-                className="relative pl-0 md:pl-20 mb-8 last:mb-0 animate-slide-in-left"
-                style={{ animationDelay: `${0.2 + index * 0.15}s` }}
+                className={`relative pl-0 md:pl-20 mb-8 last:mb-0 transition-all duration-700
+                  ${isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"}`}
+                style={{ transitionDelay: `${index * 150}ms` }}
               >
                 {/* Timeline Dot */}
-                <div className="absolute left-6 top-6 w-4 h-4 bg-primary rounded-full border-4 border-background hidden md:block shadow-lg" />
+                <div className={`absolute left-6 top-6 w-4 h-4 bg-primary rounded-full border-4 border-background hidden md:block shadow-lg
+                  transition-all duration-300 ${isVisible ? "scale-100" : "scale-0"}`}
+                  style={{ transitionDelay: `${index * 150 + 200}ms` }}
+                />
 
-                <div className={`glass-card p-6 ${edu.current ? 'border-l-4 border-l-primary' : ''}`}>
+                <div className={`glass-card p-6 ${edu.current ? 'border-l-4 border-l-primary' : ''}
+                  hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300 group`}>
                   <div className="flex flex-wrap items-start justify-between gap-4 mb-3">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-primary/10 rounded-lg">
+                      <div className="p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-300">
                         <GraduationCap className="h-5 w-5 text-primary" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-foreground">{edu.degree}</h3>
+                        <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">{edu.degree}</h3>
                         <p className="text-primary font-medium">{edu.field}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                       {edu.current && (
-                        <span className="px-2 py-1 bg-primary text-primary-foreground rounded-full text-xs">
+                        <span className="px-2 py-1 bg-primary text-primary-foreground rounded-full text-xs animate-pulse">
                           Current
                         </span>
                       )}
                       <span className="text-muted-foreground">{edu.year}</span>
                     </div>
                   </div>
-                  <p className="text-muted-foreground mb-2">{edu.institution}</p>
-                  <div className="flex items-center gap-2">
+                  <p className="text-muted-foreground mb-2 group-hover:text-foreground/80 transition-colors">{edu.institution}</p>
+                  <div className="flex items-center gap-2 group-hover:translate-x-1 transition-transform">
                     <Award className="h-4 w-4 text-accent" />
                     <span className="text-accent font-semibold">{edu.grade}</span>
                   </div>

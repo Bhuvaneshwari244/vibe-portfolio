@@ -1,11 +1,19 @@
-import { Mail, Phone, MapPin, Github, Linkedin, Send } from "lucide-react";
+import { Mail, Phone, MapPin, Github, Linkedin } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import useScrollAnimation from "@/hooks/useScrollAnimation";
+import ContactForm from "./ContactForm";
 
 const ContactSection = () => {
+  const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 });
+
   return (
     <section id="contact" className="py-20 bg-gradient-hero">
-      <div className="container mx-auto px-4">
-        <div className="animate-slide-in-left" style={{ animationDelay: "0.1s" }}>
+      <div className="container mx-auto px-4" ref={ref}>
+        <div
+          className={`transition-all duration-700 ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+          }`}
+        >
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-primary-foreground">
             Get In Touch
           </h2>
@@ -18,16 +26,20 @@ const ContactSection = () => {
         <div className="max-w-4xl mx-auto">
           <div className="grid md:grid-cols-2 gap-8">
             {/* Contact Info */}
-            <div className="space-y-6 animate-slide-in-left" style={{ animationDelay: "0.2s" }}>
-              <div className="glass-card p-6 bg-card/10 backdrop-blur-xl border-white/10">
+            <div
+              className={`space-y-6 transition-all duration-700 delay-100 ${
+                isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"
+              }`}
+            >
+              <div className="glass-card p-6 bg-card/10 backdrop-blur-xl border-white/10 hover:border-white/20 hover:bg-card/15 transition-all duration-300">
                 <h3 className="text-xl font-semibold mb-6 text-primary-foreground">Contact Information</h3>
                 
                 <div className="space-y-4">
                   <a 
                     href="mailto:bhuvaneshwaritsms010@gmail.com"
-                    className="flex items-center gap-4 text-primary-foreground/80 hover:text-primary-foreground transition-colors group"
+                    className="flex items-center gap-4 text-primary-foreground/80 hover:text-primary-foreground transition-all group hover:translate-x-1"
                   >
-                    <div className="p-3 bg-white/10 rounded-xl group-hover:bg-white/20 transition-colors">
+                    <div className="p-3 bg-white/10 rounded-xl group-hover:bg-white/20 group-hover:scale-110 transition-all duration-300">
                       <Mail className="h-5 w-5" />
                     </div>
                     <div>
@@ -38,9 +50,9 @@ const ContactSection = () => {
 
                   <a 
                     href="tel:+919701473371"
-                    className="flex items-center gap-4 text-primary-foreground/80 hover:text-primary-foreground transition-colors group"
+                    className="flex items-center gap-4 text-primary-foreground/80 hover:text-primary-foreground transition-all group hover:translate-x-1"
                   >
-                    <div className="p-3 bg-white/10 rounded-xl group-hover:bg-white/20 transition-colors">
+                    <div className="p-3 bg-white/10 rounded-xl group-hover:bg-white/20 group-hover:scale-110 transition-all duration-300">
                       <Phone className="h-5 w-5" />
                     </div>
                     <div>
@@ -67,7 +79,7 @@ const ContactSection = () => {
                       href="https://github.com/Bhuvaneshwari244/"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-3 bg-white/10 rounded-xl hover:bg-white/20 transition-colors text-primary-foreground"
+                      className="p-3 bg-white/10 rounded-xl hover:bg-white/20 hover:scale-110 hover:-rotate-6 transition-all duration-300 text-primary-foreground"
                     >
                       <Github className="h-5 w-5" />
                     </a>
@@ -75,7 +87,7 @@ const ContactSection = () => {
                       href="https://in.linkedin.com/in/bhuvaneshwari-rebba-650800280"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-3 bg-white/10 rounded-xl hover:bg-white/20 transition-colors text-primary-foreground"
+                      className="p-3 bg-white/10 rounded-xl hover:bg-white/20 hover:scale-110 hover:rotate-6 transition-all duration-300 text-primary-foreground"
                     >
                       <Linkedin className="h-5 w-5" />
                     </a>
@@ -84,34 +96,29 @@ const ContactSection = () => {
               </div>
             </div>
 
-            {/* Quick Message */}
-            <div className="animate-slide-in-left" style={{ animationDelay: "0.3s" }}>
-              <div className="glass-card p-6 bg-card/10 backdrop-blur-xl border-white/10 h-full flex flex-col justify-center">
-                <h3 className="text-xl font-semibold mb-4 text-primary-foreground">Quick Actions</h3>
-                <p className="text-primary-foreground/70 mb-6">
-                  Ready to collaborate? Let's connect and discuss how I can contribute to your team!
+            {/* Contact Form */}
+            <div
+              className={`transition-all duration-700 delay-200 ${
+                isVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10"
+              }`}
+            >
+              <div className="glass-card p-6 bg-card/10 backdrop-blur-xl border-white/10 hover:border-white/20 transition-all duration-300">
+                <h3 className="text-xl font-semibold mb-4 text-primary-foreground">Send a Message</h3>
+                <p className="text-primary-foreground/70 mb-6 text-sm">
+                  Have a project in mind or want to collaborate? Drop me a message!
                 </p>
-                <div className="space-y-3">
-                  <Button variant="hero" size="lg" className="w-full" asChild>
-                    <a href="mailto:bhuvaneshwaritsms010@gmail.com">
-                      <Send className="mr-2 h-5 w-5" />
-                      Send Email
-                    </a>
-                  </Button>
-                  <Button variant="heroOutline" size="lg" className="w-full" asChild>
-                    <a href="https://in.linkedin.com/in/bhuvaneshwari-rebba-650800280" target="_blank" rel="noopener noreferrer">
-                      <Linkedin className="mr-2 h-5 w-5" />
-                      Connect on LinkedIn
-                    </a>
-                  </Button>
-                </div>
+                <ContactForm />
               </div>
             </div>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="mt-16 pt-8 border-t border-white/10 text-center animate-fade-in-up" style={{ animationDelay: "0.5s" }}>
+        <div
+          className={`mt-16 pt-8 border-t border-white/10 text-center transition-all duration-700 delay-300 ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
+          }`}
+        >
           <p className="text-primary-foreground/60 text-sm">
             © 2026 Bhuvaneshwari Rebba. Built with ❤️ using React & Tailwind CSS
           </p>
