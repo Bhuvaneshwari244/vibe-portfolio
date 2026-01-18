@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -33,26 +33,92 @@ serve(async (req) => {
       );
     }
 
-    // Log the contact message (you can extend this to send emails, store in DB, etc.)
-    console.log("New contact message received:", {
-      name,
-      email,
-      subject,
-      message,
-      timestamp: new Date().toISOString(),
+    const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+    if (!RESEND_API_KEY) {
+      console.error("RESEND_API_KEY not configured");
+      return new Response(
+        JSON.stringify({ error: "Email service not configured" }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    console.log("Sending contact message email to dhamodharramisetti@gmail.com");
+
+    // Send email notification using Resend API directly
+    const emailResponse = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: "Portfolio Contact <onboarding@resend.dev>",
+        to: ["dhamodharramisetti@gmail.com"],
+        subject: `New Contact: ${subject}`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #333; border-bottom: 2px solid #8b5cf6; padding-bottom: 10px;">
+              New Contact Form Submission
+            </h2>
+            <div style="background-color: #f9fafb; padding: 20px; border-radius: 8px; margin: 20px 0;">
+              <p style="margin: 10px 0;"><strong>From:</strong> ${name}</p>
+              <p style="margin: 10px 0;"><strong>Email:</strong> ${email}</p>
+              <p style="margin: 10px 0;"><strong>Subject:</strong> ${subject}</p>
+            </div>
+            <div style="background-color: #fff; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
+              <h3 style="color: #333; margin-top: 0;">Message:</h3>
+              <p style="color: #555; line-height: 1.6;">${message}</p>
+            </div>
+            <p style="color: #888; font-size: 12px; margin-top: 20px;">
+              This message was sent from your portfolio contact form.
+            </p>
+          </div>
+        `,
+      }),
     });
 
-    // Here you can add integrations like:
-    // 1. Send email via Resend/SendGrid
-    // 2. Store in database
-    // 3. Send to Slack/Discord webhook
-    // 4. Trigger n8n workflow
+    if (!emailResponse.ok) {
+      const errorData = await emailResponse.text();
+      console.error("Resend API error:", errorData);
+      throw new Error(`Failed to send email: ${errorData}`);
+    }
 
-    // For now, we'll return success
+    const emailResult = await emailResponse.json();
+    console.log("Email sent successfully:", emailResult);
+
+    // Send confirmation email to the sender
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: "Bhuvaneshwari <onboarding@resend.dev>",
+        to: [email],
+        subject: "Thank you for reaching out!",
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #8b5cf6;">Thank you for your message, ${name}!</h2>
+            <p style="color: #555; line-height: 1.6;">
+              I have received your message and will get back to you as soon as possible.
+            </p>
+            <p style="color: #555; line-height: 1.6;">
+              Best regards,<br>
+              Bhuvaneshwari
+            </p>
+          </div>
+        `,
+      }),
+    });
+
     return new Response(
       JSON.stringify({
         success: true,
-        message: "Contact message received successfully",
+        message: "Contact message sent successfully",
       }),
       {
         status: 200,
@@ -62,7 +128,7 @@ serve(async (req) => {
   } catch (error) {
     console.error("Error processing contact message:", error);
     return new Response(
-      JSON.stringify({ error: "Failed to process message" }),
+      JSON.stringify({ error: "Failed to send message" }),
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
