@@ -1,4 +1,4 @@
-import { Github, Linkedin, Mail, Phone, ChevronDown } from "lucide-react";
+import { Github, Linkedin, Mail, Phone, ChevronDown, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import profileImage from "@/assets/profile-placeholder.png";
 import heroBg from "@/assets/hero-bg.png";
@@ -63,6 +63,16 @@ const HeroSection = () => {
             >
               <Mail className="mr-2 h-5 w-5" />
               Contact Me
+            </Button>
+            <Button
+              variant="hero"
+              size="lg"
+              asChild
+            >
+              <a href="/resume/BHUVANESHWARI_Resume.pdf" download="BHUVANESHWARI_Resume.pdf">
+                <Download className="mr-2 h-5 w-5" />
+                Download Resume
+              </a>
             </Button>
             <Button
               variant="heroOutline"

@@ -45,7 +45,8 @@ serve(async (req) => {
       );
     }
 
-    console.log("Sending contact message email to dhamodharramisetti@gmail.com");
+    // Send to your verified email address (bhuvaneshwaritsms010@gmail.com)
+    console.log("Sending contact message email to bhuvaneshwaritsms010@gmail.com");
 
     // Send email notification using Resend API directly
     const emailResponse = await fetch("https://api.resend.com/emails", {
@@ -56,7 +57,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         from: "Portfolio Contact <onboarding@resend.dev>",
-        to: ["dhamodharramisetti@gmail.com"],
+        to: ["bhuvaneshwaritsms010@gmail.com"],
         subject: `New Contact: ${subject}`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -88,32 +89,6 @@ serve(async (req) => {
 
     const emailResult = await emailResponse.json();
     console.log("Email sent successfully:", emailResult);
-
-    // Send confirmation email to the sender
-    await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${RESEND_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: "Bhuvaneshwari <onboarding@resend.dev>",
-        to: [email],
-        subject: "Thank you for reaching out!",
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #8b5cf6;">Thank you for your message, ${name}!</h2>
-            <p style="color: #555; line-height: 1.6;">
-              I have received your message and will get back to you as soon as possible.
-            </p>
-            <p style="color: #555; line-height: 1.6;">
-              Best regards,<br>
-              Bhuvaneshwari
-            </p>
-          </div>
-        `,
-      }),
-    });
 
     return new Response(
       JSON.stringify({
